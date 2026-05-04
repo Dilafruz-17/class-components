@@ -1,122 +1,86 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import React from "react"
+import { Search } from "./components/Search"
+import { CardList } from "./components/CardList"
+import { Loader } from "./components/Loader"
+import { ErrorMessage } from "./components/ErrorMessage"
+import { ErrorTestButton } from "./components/ErrorTestButton"
+import { fetchItems } from "./api/api"
+import type { Item } from "./types/Item"
 
-function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+type State = {
+  items: Item[]
+  loading: boolean
+  error: string
+  search: string
 }
 
-export default App
+export class App extends React.Component<{}, State> {
+  constructor(props: {}) {
+    super(props)
+
+    this.state = {
+      items: [],
+      loading: false,
+      error: "",
+      search: localStorage.getItem("search") || ""
+    }
+  }
+
+  componentDidMount() {
+    this.loadData(this.state.search)
+  }
+
+  loadData = async (search: string) => {
+    this.setState({ loading: true, error: "" })
+
+    try {
+    
+      await new Promise(res => setTimeout(res, 300))
+
+      const data = await fetchItems(search)
+
+      this.setState({ items: data, loading: false })
+    } catch {
+      this.setState({ error: "Failed to load data", loading: false })
+    }
+  }
+
+  handleSearch = (value: string) => {
+     
+    if (value === this.state.search) return
+
+    this.setState({ search: value })
+    this.loadData(value)
+  }
+
+  render() {
+    const { items, loading, error } = this.state
+
+    return (
+      <div className="container">
+        <div className="search-section">
+          <Search onSearch={this.handleSearch} />
+        </div>
+
+        <div className="results-section">
+          {loading && <Loader />}
+
+          {error && <ErrorMessage message={error} />}
+
+          {!loading && items.length === 0 && !error && (
+            <p>No results found</p>
+          )}
+
+          <CardList items={items} />
+        </div>
+
+        <div >
+          <ErrorTestButton />
+        </div>
+      </div>
+    )
+  }
+}
+
+
+export default App;
