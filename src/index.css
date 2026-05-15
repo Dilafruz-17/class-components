@@ -55,6 +55,10 @@ body {
   width: 100%;
   max-width: 1200px;
   margin: auto;
+  display: flex;
+  flex-direction: row;
+  gap: 1.5rem;
+  align-items: flex-start;
 }
 
 /* SEARCH SECTION */
@@ -80,6 +84,53 @@ body {
   min-height: 300px;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
   transition: 0.3s ease;
+}
+
+.app__left {
+  flex: 1;
+  min-width: 0;
+}
+
+.app__right {
+  width: 320px;
+  min-width: 320px;
+  position: sticky;
+  top: 1rem;
+}
+
+.detail-panel {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+  padding: 1.5rem;
+  text-align: center;
+  color: white;
+  backdrop-filter: blur(10px);
+}
+
+.detail-panel__close {
+  display: block;
+  margin-bottom: 1rem;
+  background: #e53e3e;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.4rem 1rem;
+  cursor: pointer;
+  width: 100%;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin: 1.5rem 0;
+  color: white;
+}
+
+.pagination button {
+  padding: 8px 16px;
+  border-radius: 10px;
 }
 
 /* ERROR BUTTON */
@@ -187,4 +238,90 @@ button:hover {
   .app__results-section {
     padding: 20px;
   }
+}
+
+/* about */
+.about-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.about-card {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(12px);
+  border-radius: 24px;
+  padding: 3rem;
+  max-width: 500px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+}
+
+.about-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.about-title {
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+}
+
+.about-author {
+  opacity: 0.9;
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+}
+
+.about-desc {
+  opacity: 0.8;
+  margin-bottom: 2rem;
+}
+
+.about-link {
+  display: inline-block;
+  background: #ff0000;
+  color: white;
+  padding: 0.7rem 1.5rem;
+  border-radius: 12px;
+  text-decoration: none;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.about-btn {
+  display: block;
+  margin: 1rem auto 0;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  padding: 0.7rem 1.5rem;
+  border-radius: 12px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.about-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.app__header nav a {
+  
+  color: white;
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 0.2rem 1.2rem;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  transition: 0.3s ease;
+}
+
+.app__header nav a:hover {
+  background: rgba(255, 255, 255, 0.35);
 }

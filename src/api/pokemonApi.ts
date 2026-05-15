@@ -2,9 +2,16 @@ import { ApiResponse, PokemonDetail } from '../types';
 
 const BASE_URL = 'https://pokeapi.co/api/v2';
 
-export async function fetchPokemons(query: string): Promise<PokemonDetail[]> {
+export async function fetchPokemons(
+  query: string,
+  page: number = 1,
+  limit: number = 20
+): Promise<PokemonDetail[]> {
   if (query.trim() === '') {
-    const response = await fetch(`${BASE_URL}/pokemon?limit=20&offset=0`);
+    const offset = (page - 1) * limit;
+    const response = await fetch(
+      `${BASE_URL}/pokemon?limit=${limit}&offset=${offset}`
+    );
     if (!response.ok) {
       throw new Error(`Error ${response.status}: Failed to fetch Pokémon list`);
     }
