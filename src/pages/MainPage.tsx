@@ -7,6 +7,8 @@ import Search from '../components/Search/Search';
 import CardList from '../components/CardList/CardList';
 import Spinner from '../components/Spinner/Spinner';
 import ErrorBoundary from '../components/ErrorBoundary/ErrorBoundary';
+import Flyout from '../components/Flyout/Flyout';
+import ThemeToggle from '../components/ThemeToggle/ThemeToggle';
 
 function MainPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -70,6 +72,7 @@ function MainPage() {
         </div>
         <nav>
           <a href="/about">About</a>
+           <ThemeToggle />
         </nav>
       </header>
 
@@ -108,6 +111,7 @@ function MainPage() {
           <Outlet />
         </div>
       </main>
+      <Flyout />
     </div>
   );
 }
