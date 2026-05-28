@@ -1,7 +1,5 @@
-import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate, Outlet } from 'react-router-dom';
-import { fetchPokemons } from '../api/pokemonApi';
-import { PokemonDetail } from '../types';
+import { useGetPokemonsQuery } from '../store/apiSlice';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import Search from '../components/Search/Search';
 import CardList from '../components/CardList/CardList';
@@ -9,6 +7,7 @@ import Spinner from '../components/Spinner/Spinner';
 import ErrorBoundary from '../components/ErrorBoundary/ErrorBoundary';
 import Flyout from '../components/Flyout/Flyout';
 import ThemeToggle from '../components/ThemeToggle/ThemeToggle';
+import { useState } from 'react';
 
 function MainPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -16,38 +15,14 @@ function MainPage() {
   const { getValue, setValue } = useLocalStorage();
 
   const page = parseInt(searchParams.get('page') ?? '1');
-
-  const [pokemons, setPokemons] = useState<PokemonDetail[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [query, setQuery] = useState(getValue());
 
-  const LIMIT = 20;
-
-  const loadPokemons = async (searchQuery: string, currentPage: number) => {
-    setLoading(true);
-    setError(null);
-    try {
-      await new Promise((r) => setTimeout(r, 300));
-      const results = await fetchPokemons(searchQuery, currentPage, LIMIT);
-      setPokemons(results);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error');
-      setPokemons([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    loadPokemons(query, page);
-  }, [page]);
+  const { data: pokemons = [], isLoading, isError, refetch } = useGetPokemonsQuery({ query, page });
 
   const handleSearch = (newQuery: string) => {
     setValue(newQuery);
     setQuery(newQuery);
     setSearchParams({ page: '1' });
-    loadPokemons(newQuery, 1);
   };
 
   const handleCardClick = (name: string) => {
@@ -72,7 +47,7 @@ function MainPage() {
         </div>
         <nav>
           <a href="/about">About</a>
-           <ThemeToggle />
+          <ThemeToggle />
         </nav>
       </header>
 
@@ -85,26 +60,36 @@ function MainPage() {
           </section>
 
           <section className="app__results-section">
-            {loading ? (
+            {isLoading ? (
               <Spinner />
+            ) : isError ? (
+              <div className="error-message">
+                Xatolik yuz berdi. Iltimos, qayta urinib ko'ring.
+              </div>
             ) : (
               <ErrorBoundary>
                 <CardList
                   pokemons={pokemons}
-                  error={error}
+                  error={null}
                   onCardClick={handleCardClick}
                 />
               </ErrorBoundary>
             )}
           </section>
 
-          {!loading && pokemons.length > 0 && (
+          {!isLoading && pokemons.length > 0 && (
             <div className="pagination">
               <button onClick={handlePrev} disabled={page === 1}>← Prev</button>
               <span>Page {page}</span>
               <button onClick={handleNext}>Next →</button>
             </div>
           )}
+
+          <div className="refresh-section">
+            <button className="refresh-btn" onClick={() => refetch()}>
+              🔄 Refresh
+            </button>
+          </div>
         </div>
 
         <div className="app__right">
